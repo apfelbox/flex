@@ -107,17 +107,23 @@ class Flex implements PluginInterface, EventSubscriberInterface
             $app->add(new Command\UnpackCommand($resolver));
 
             $innerIo = $trace['args'][0];
-            $io->write("Disabling the interactivity of IO");
-            $innerIo->setInteractive(false);
             break;
         }
 
         if (null !== $innerIo)
         {
-            $composer->getEventDispatcher()->addListener(ScriptEvents::POST_CREATE_PROJECT_CMD,
+            $composer->getEventDispatcher()->addListener(ScriptEvents::POST_ROOT_PACKAGE_INSTALL,
                 function () use ($innerIo, $io)
                 {
                     $io->write("Disabling the interactivity of IO");
+                    $innerIo->setInteractive(false);
+                }
+            );
+
+            $composer->getEventDispatcher()->addListener(ScriptEvents::POST_CREATE_PROJECT_CMD,
+                function () use ($innerIo, $io)
+                {
+                    $io->write("Re-enabling the interactivity of IO");
                     $innerIo->setInteractive(true);
                 }
             );
