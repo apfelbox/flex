@@ -105,7 +105,6 @@ class Flex implements PluginInterface, EventSubscriberInterface
             $app->add(new Command\RemoveCommand($resolver));
             $app->add(new Command\UnpackCommand($resolver));
 
-            $trace['args'][0]->setInteractive(false);
             break;
         }
     }
