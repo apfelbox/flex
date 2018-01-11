@@ -107,16 +107,25 @@ class Flex implements PluginInterface, EventSubscriberInterface
             $app->add(new Command\UnpackCommand($resolver));
 
             $innerIo = $trace['args'][0];
-            $innerIo->setInteractive(false);
             break;
         }
 
-        $composer->getEventDispatcher()->addListener(ScriptEvents::POST_CREATE_PROJECT_CMD,
-            function () use ($innerIo)
-            {
-                $innerIo->setInteractive(true);
-            }
-        );
+        if (null !== $innerIo)
+        {
+            $composer->getEventDispatcher()->addListener(ScriptEvents::POST_ROOT_PACKAGE_INSTALL,
+                function () use ($innerIo)
+                {
+                    $innerIo->setInteractive(false);
+                }
+            );
+
+            $composer->getEventDispatcher()->addListener(ScriptEvents::POST_CREATE_PROJECT_CMD,
+                function () use ($innerIo)
+                {
+                    $innerIo->setInteractive(true);
+                }
+            );
+        }
     }
 
     public function configureProject(Event $event)
