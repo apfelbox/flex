@@ -80,6 +80,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
         $this->downloader = new Downloader($composer, $io);
         $this->downloader->setFlexId($this->getFlexId());
         $this->lock = new Lock(str_replace(Factory::getComposerFile(), 'composer.json', 'symfony.lock'));
+        $innerIo = null;
 
         $backtrace = debug_backtrace();
         foreach ($backtrace as $trace) {
@@ -105,8 +106,17 @@ class Flex implements PluginInterface, EventSubscriberInterface
             $app->add(new Command\RemoveCommand($resolver));
             $app->add(new Command\UnpackCommand($resolver));
 
+            $innerIo = $trace['args'][0];
+            $innerIo->setInteractive(false);
             break;
         }
+
+        $composer->getEventDispatcher()->addListener(ScriptEvents::POST_CREATE_PROJECT_CMD,
+            function () use ($innerIo)
+            {
+                $innerIo->setInteractive(true);
+            }
+        );
     }
 
     public function configureProject(Event $event)
