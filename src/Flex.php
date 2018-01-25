@@ -78,6 +78,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
     public function activate(Composer $composer, IOInterface $io)
     {
+        \var_dump("activate flex");
         if (!extension_loaded('openssl')) {
             self::$activated = false;
             $io->writeError('<warning>Symfony Flex has been disabled. You must enable the openssl extension in your "php.ini" file.</warning>');
