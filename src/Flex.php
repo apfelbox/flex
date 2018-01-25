@@ -190,6 +190,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
         \var_dump(\class_exists(PreCommandRunEvent::class));
         if (\class_exists(PreCommandRunEvent::class))
         {
+            \var_dump("register listener");
             // always remove the VCS
             $composer->getEventDispatcher()->addListener(
                 PluginEvents::PRE_COMMAND_RUN,
