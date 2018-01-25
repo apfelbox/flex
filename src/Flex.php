@@ -187,12 +187,15 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
     private function disableVCSCreation (Composer $composer, ArgvInput $input)
     {
+        \var_dump(\class_exists(PreCommandRunEvent::class));
         if (\class_exists(PreCommandRunEvent::class))
         {
             // always remove the VCS
             $composer->getEventDispatcher()->addListener(
                 PluginEvents::PRE_COMMAND_RUN,
                 function (PreCommandRunEvent $event) {
+                    \var_dump("in event");
+                    \var_dump($event->getCommand());
                     if ('create-project' === $event->getCommand()) {
                         $event->getInput()->setOption('remove-vcs', true);
                     }
