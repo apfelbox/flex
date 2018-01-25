@@ -154,7 +154,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
             }
 
             if ('create-project' === $command) {
-                $input->setInteractive(false);
+                $this->disableVCSCreation($composer, $input);
             } elseif ('update' === $command) {
                 $this->displayThanksReminder = 1;
             }
@@ -180,6 +180,29 @@ class Flex implements PluginInterface, EventSubscriberInterface
             $app->add(new Command\UnpackCommand($resolver));
 
             break;
+        }
+    }
+
+
+    private function disableVCSCreation (Composer $composer, ArgvInput $input)
+    {
+        if (\defined(PluginEvents::class . "::PRE_COMMAND_RUN"))
+        {
+            // always remove the VCS
+            $composer->getEventDispatcher()->addListener(
+                PluginEvents::PRE_COMMAND_RUN,
+                function (PreCommandRunEvent $event) {
+                    if ('create-project' === $event->getCommand()) {
+                        $event->getInput()->setOption('remove-vcs', true);
+                    }
+                }
+            );
+        }
+        else
+        {
+            // Just disable interactivity in the case the composer version is too old and doesn't yet
+            // support the required plugin event.
+            $input->setInteractive(false);
         }
     }
 
