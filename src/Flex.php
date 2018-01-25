@@ -35,6 +35,7 @@ use Composer\Json\JsonManipulator;
 use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
+use Composer\Plugin\PreCommandRunEvent;
 use Composer\Plugin\PreFileDownloadEvent;
 use Composer\Repository\ComposerRepository as BaseComposerRepository;
 use Composer\Script\Event;
@@ -186,7 +187,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
     private function disableVCSCreation (Composer $composer, ArgvInput $input)
     {
-        if (\defined(PluginEvents::class . "::PRE_COMMAND_RUN"))
+        if (\class_exists(PreCommandRunEvent::class))
         {
             // always remove the VCS
             $composer->getEventDispatcher()->addListener(
